@@ -1,11 +1,3 @@
-
-
-
-
-
-
-
-
 import mongoose from "mongoose";
 import {db_name} from "./constant.js";
 import express from "express";
@@ -13,6 +5,51 @@ import dotenv from 'dotenv';
 dotenv.config();
 import connectdb from "./db/index.js";
 connectdb()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // const app=express();
 // ;(async ()=>{
 //     try {
