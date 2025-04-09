@@ -4,7 +4,7 @@ const asynchandler=(fn)=>{
     try{
 await fn(req,res,next)
     }
-    catch{
+    catch(err){
         res.status(err.code||500).json({
             success:false,
             msg:err.message

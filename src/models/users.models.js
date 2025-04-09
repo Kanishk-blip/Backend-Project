@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 const UserSchema=new Schema({
 
-    UserName:{
+    username:{
         type:String,
         required:true,
         unique:true,
@@ -23,7 +23,7 @@ const UserSchema=new Schema({
         type:String,
         required:[true,'Password is required ']
     },
-    fullname : {
+    fullName : {
         type: String,
         required: true,
         trim: true,
@@ -33,7 +33,7 @@ const UserSchema=new Schema({
         type: String,
         required: true,
     },
-    coverimage : {
+    coverImage : {
         type: String,
     },
     refreshToken: {
@@ -76,4 +76,4 @@ process.env.REFRESH_TOKEN_SECRET,{
     expiresIn: process.env.REFRESH_TOKEN_EXPIRY
 })
 }
-export const User=mongoose.models("User",UserSchema)
+export const User = mongoose.models.User || mongoose.model("User", UserSchema);
