@@ -4,7 +4,16 @@ import express from "express";
 import dotenv from 'dotenv';
 dotenv.config();
 import connectdb from "./db/index.js";
-connectdb()
+import { app } from "./app.js";
+connectdb().then(() => {
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(` Server is running at port : ${process.env.PORT}`);
+        console.log(` URL: http://localhost:${process.env.PORT || 8000}`);
+    })
+})
+.catch((err) => {
+    console.log("MONGO db connection failed !!! ", err);
+})
 
 
 
