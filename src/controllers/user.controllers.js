@@ -1,6 +1,6 @@
 import { apierror } from '../utils/apierror.js';
 import {asynchandler} from '../utils/asynchandler.js';
-
+import { jwt } from "jsonwebtoken";
  import { User } from '../models/users.models.js';
  import { ApiResponse } from '../utils/ApiResponse.js';
 
@@ -95,6 +95,40 @@ return res.status(200)
     "User logged In Successfully"
 ))
  })
+ const logoutuser=asynchandler(async(req,res)=>{
+const id=req.user._id;
+const user=User.findByIdAndUpdate(id,{
+    refreshToken:undefined
+})
+ })
+ const refreshAcessToken=asynchandler(async(req,res)=>{
+    const incomingrefreshToken=req.cookies?.refreshtoken|| req.body.refreshtoken;
+    const decoderefreshToken=await jwt.verify(incomingrefreshToken,process.env.REFRESH_TOKEN_SECRET)
+     const user=await User.findById(decoderefreshToken?._id);
+     if(user.refreshtoken!==incomingrefreshToken){
+        throw new apierror(400,"refresh token is expired")
+        ;
+     }
+     const {accesstoken,newrefreshtoken}=await generatebothAccessandRefreshToken(user._id);
+     const options={
+        httpsOnly:true,
+        secure:true
+     }
+     return res.status(200)
+     .cookies("accesstoken",accesstoken,options)
+     .cookies("refreshtoken",newrefreshtoken,options)
+     .json(
+        new ApiResponse(
+            201,
+            {accesstoken,refreshtoken:newrefreshtoken}
+            ,
+                "ok"
+            
+        )
+     )
+    })
  export {registerUser,
-    loginUser
+    loginUser,
+    logoutuser,
+    refreshAcessToken
  }
