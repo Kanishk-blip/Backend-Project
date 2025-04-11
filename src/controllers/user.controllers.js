@@ -127,8 +127,66 @@ const user=User.findByIdAndUpdate(id,{
         )
      )
     })
+    const changePassword=asynchandler(async(req,res)=>{
+        const {oldPassword,newPassword}=req.body();
+        const user=await User.findById(req.user?._id);
+        const ispasswordCorrect=await user.ispasswordCorrect(oldPassword);
+        if(!ispasswordCorrect){
+            throw new apierror(400,"invalid password");
+        }
+        user.password=newPassword;
+        req.save({validateBeforeSave:false});
+        res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                {},
+                "password changed"
+            )
+        )
+    })
+    const getCurrentUser=asynchandler(async(req,res)=>{
+        const user=await User.findById(req.user?._id).select("-password -refreshToken")
+        if(!user){
+            throw new apierror(400,"user is not present");
+        }
+        res.status(200)
+        .json(new ApiResponse(
+            200,
+            {user},
+            "user details are succesfully send"
+        ))
+    })
+    const updateAccountDetails = asynchandler(async(req, res) => {
+        const {fullName, email} = req.body
+    
+        if (!fullName || !email) {
+            throw new apierror(400, "All fields are required")
+        }
+    
+        const user = await User.findByIdAndUpdate(
+            req.user?._id,
+            {
+                $set: {
+                    fullName,
+                    email: email
+                }
+            },
+            {new: true}
+            
+        ).select("-password")
+    
+        return res
+        .status(200)
+        .json(new ApiResponse(200, user, "Account details updated successfully"))
+    });
+    
  export {registerUser,
     loginUser,
     logoutuser,
-    refreshAcessToken
+    refreshAcessToken,
+    changePassword,
+    getCurrentUser,
+    updateAccountDetails
+
  }
